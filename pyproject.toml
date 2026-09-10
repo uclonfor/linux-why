@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "linux-why"
+version = "0.1.1"
+description = "Ask your Linux system: why is this here? Local provenance across Linux subsystems."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "linux-why contributors"}]
+keywords = ["linux", "diagnostics", "pacman", "systemd", "provenance"]
+classifiers = ["Development Status :: 3 - Alpha", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3 :: Only", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13"]
+dependencies = ["textual>=6.12,<7", "pyfiglet>=1.0,<2"]
+
+[project.scripts]
+linux-why = "linux_why.cli:main"
+why = "linux_why.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.11", "mypy>=1.15", "build>=1.2", "jsonschema>=4.23", "types-jsonschema", "pytest-asyncio>=0.25"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv*", ".graphify"]
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["linux_why"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["integration: read-only tests against the current Linux host"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["linux_why"]
+
+[tool.hatch.build.targets.sdist]
+include = ["linux_why/", "tests/", "docs/", "packaging/", ".github/", "*.md", "LICENSE", "pyproject.toml"]
+
+[[tool.mypy.overrides]]
+module = ["pyfiglet", "pyfiglet.*"]
+ignore_missing_imports = true
